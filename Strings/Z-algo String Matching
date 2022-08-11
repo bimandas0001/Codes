@@ -43,6 +43,7 @@ void stringMatching(string &text, string &pat){
     if(patternPresent)	  cout<< "Yes" <<endl;
     else	cout<< "No" <<endl;
 }
+// /
 
 int main(){
     int t;    cin>>t;
