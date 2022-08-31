@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// segment tree
+
+int merge(int leftNode, int rightNode){
+    return leftNode + rightNode;
+}
+
+void build_tree(vector<int> &arr, vector<int> &tree, int start, int end, int treeNode){
+    if(start == end){
+        tree[treeNode] = arr[start];
+        return;
+    }
+    
+    int mid = (start+end)/2;
+    build_tree(arr, tree, start, mid, 2*treeNode+1);
+    build_tree(arr, tree, mid+1, end, 2*treeNode+2);
+    tree[treeNode] = merge(tree[2*treeNode+1], tree[2*treeNode+2]);
+}
+
+void update_tree(vector<int> &arr, vector<int> &tree, int start, int end, int treeNode, int index, int value){
+    if(start == end){
+        arr[index] = value;
+        tree[treeNode] = value;
+        return;
+    }
+    
+    int mid = (start+end)/2;
+    if(index <= mid)    update_tree(arr, tree, start, mid, 2*treeNode+1, index, value);
+    else    update_tree(arr, tree, mid+1, end, 2*treeNode+2, index, value);
+    
+    tree[treeNode] = merge(tree[2*treeNode+1], tree[2*treeNode+2]);
+}
+
+int query(vector<int> &tree, int start, int end, int treeNode, int left, int right){
+    // Out of range
+    if(start>right || end<left)    return 0;
+    // Totally in range
+    if(start>=left && end<=right)     return tree[treeNode];
+    // Partially in range
+    int mid = (start+end)/2;
+    int a = query(tree, start, mid, 2*treeNode+1, left, right);
+    int b = query(tree, mid+1, end, 2*treeNode+2, left, right);
+    return merge(a, b);
+}
+// /
+
+
+int main(){
+    int n;    cin>>n;
+    vector<int> arr(n);
+    for(auto &i : arr)    cin>> i;
+    
+    vector<int> tree(4*n);
+    build_tree(arr, tree, 0, n-1, 0);
+    // for(auto i : tree)  cout<< i <<endl;
+    
+    int index, value;    cin>>index>>value;
+    update_tree(arr, tree, 0, n-1, 0, index, value);
+    
+    int left, right;    cin>> left >> right;
+    int ans = query(tree, 0, n-1, 0, left, right);
+    
+    cout<< ans <<endl;
+}
