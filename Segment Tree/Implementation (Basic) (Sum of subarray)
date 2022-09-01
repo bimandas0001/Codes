@@ -2,7 +2,7 @@
 using namespace std;
 
 
-// segment tree
+// Segment tree
 
 int merge(int leftNode, int rightNode){
     return leftNode + rightNode;
