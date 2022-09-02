@@ -9,7 +9,7 @@ int merge(int leftNode, int rightNode){
 
 void build_tree(vector<int> &arr, vector<int> &tree, int start, int end, int treeNode){
     if(start == end){
-        tree[treeNode] = arr[start];
+        tree[treeNode] = arr[start];                                                    // Changable
         return;
     }
     
@@ -22,7 +22,7 @@ void build_tree(vector<int> &arr, vector<int> &tree, int start, int end, int tre
 void update_tree(vector<int> &arr, vector<int> &tree, int start, int end, int treeNode, int index, int value){
     if(start == end){
         arr[index] = value;
-        tree[treeNode] = value;
+        build_tree(arr, tree, start, start, treeNode);
         return;
     }
     
