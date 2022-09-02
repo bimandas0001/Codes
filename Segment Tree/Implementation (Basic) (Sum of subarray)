@@ -4,45 +4,45 @@ using namespace std;
 
 // Segment tree
 
-int merge(int leftNode, int rightNode){
-    return leftNode + rightNode;
+template <typename T> T merge(T ln, T rn){    // changable  
+    return ln + rn;
 }
 
-void build_tree(vector<int> &arr, vector<int> &tree, int start, int end, int treeNode){
-    if(start == end){
-        tree[treeNode] = arr[start];
+template <typename T> void build_tree(vector<int> &arr, vector<T> &tree, int start, int end, int cn){
+    if(start == end){    // changable
+        tree[cn] = arr[start];
         return;
     }
     
     int mid = (start+end)/2;
-    build_tree(arr, tree, start, mid, 2*treeNode+1);
-    build_tree(arr, tree, mid+1, end, 2*treeNode+2);
-    tree[treeNode] = merge(tree[2*treeNode+1], tree[2*treeNode+2]);
+    build_tree(arr, tree, start, mid, 2*cn+1);
+    build_tree(arr, tree, mid+1, end, 2*cn+2);
+    tree[cn] = merge(tree[2*cn+1], tree[2*cn+2]);
 }
 
-void update_tree(vector<int> &arr, vector<int> &tree, int start, int end, int treeNode, int index, int value){
+template <typename T> void update_tree(vector<int> &arr, vector<T> &tree, int start, int end, int cn, int index, int value){
     if(start == end){
         arr[index] = value;
-        tree[treeNode] = value;
+        build_tree(arr, tree, start, start, cn);
         return;
     }
     
     int mid = (start+end)/2;
-    if(index <= mid)    update_tree(arr, tree, start, mid, 2*treeNode+1, index, value);
-    else    update_tree(arr, tree, mid+1, end, 2*treeNode+2, index, value);
+    if(index <= mid)    update_tree(arr, tree, start, mid, 2*cn+1, index, value);
+    else    update_tree(arr, tree, mid+1, end, 2*cn+2, index, value);
     
-    tree[treeNode] = merge(tree[2*treeNode+1], tree[2*treeNode+2]);
+    tree[cn] = merge(tree[2*cn+1], tree[2*cn+2]);
 }
 
-int query(vector<int> &tree, int start, int end, int treeNode, int left, int right){
-    // Out of range
+template <typename T> T query(vector<T> &tree, int start, int end, int cn, int left, int right){
+    // Out of range             // changable
     if(start>right || end<left)    return 0;
     // Totally in range
-    if(start>=left && end<=right)     return tree[treeNode];
+    if(start>=left && end<=right)     return tree[cn];
     // Partially in range
     int mid = (start+end)/2;
-    int a = query(tree, start, mid, 2*treeNode+1, left, right);
-    int b = query(tree, mid+1, end, 2*treeNode+2, left, right);
+    auto a = query(tree, start, mid, 2*cn+1, left, right);
+    auto b = query(tree, mid+1, end, 2*cn+2, left, right);
     return merge(a, b);
 }
 // /
