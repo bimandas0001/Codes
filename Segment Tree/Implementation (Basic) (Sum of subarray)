@@ -4,12 +4,13 @@ using namespace std;
 
 // Segment tree
 
+// Merge
 template <typename T> T merge(T ln, T rn){    // changable  
     return ln + rn;
 }
 
-template <typename T> void build_tree(vector<int> &arr, vector<T> &tree, int start, int end, int cn){
-    if(start == end){    // changable
+// Build Tree
+template <typename T, typename U> void build_tree(U &arr, vector<T> &tree, int start, int end, int cn){    if(start == end){    // changable
         tree[cn] = arr[start];
         return;
     }
@@ -20,7 +21,8 @@ template <typename T> void build_tree(vector<int> &arr, vector<T> &tree, int sta
     tree[cn] = merge(tree[2*cn+1], tree[2*cn+2]);
 }
 
-template <typename T> void update_tree(vector<int> &arr, vector<T> &tree, int start, int end, int cn, int index, int value){
+// Update Tree
+template <typename T, typename U, typename V> void update_tree(U &arr, vector<T> &tree, int start, int end, int cn, int index, V value){
     if(start == end){
         arr[index] = value;
         build_tree(arr, tree, start, start, cn);
@@ -34,6 +36,7 @@ template <typename T> void update_tree(vector<int> &arr, vector<T> &tree, int st
     tree[cn] = merge(tree[2*cn+1], tree[2*cn+2]);
 }
 
+// Query
 template <typename T> T query(vector<T> &tree, int start, int end, int cn, int left, int right){
     // Out of range             // changable
     if(start>right || end<left)    return 0;
