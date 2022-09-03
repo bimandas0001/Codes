@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int MAX = 1e5;
+const int mod = 33333;
+
+vector<int> two_power(MAX+1);
+
+// Segment tree
+
+// Merge
+template <typename T> T merge(T ln, T rn, int len){    // changable  
+    return ((ln * two_power[len]) + rn)%mod;
+}
+
+// Build Tree
+template <typename T, typename U> void build_tree(U &arr, vector<T> &tree, int start, int end, int cn){
+    if(start == end){    // changable
+        tree[cn] = arr[start] - '0';
+        return;
+    }
+    
+    int mid = (start+end)/2;
+    build_tree(arr, tree, start, mid, 2*cn+1);
+    build_tree(arr, tree, mid+1, end, 2*cn+2);
+    tree[cn] = merge(tree[2*cn+1], tree[2*cn+2], end-mid);
+}
+
+// Update Tree
+template <typename T, typename U, typename V> void update_tree(U &arr, vector<T> &tree, int start, int end, int cn, int index, V value){
+    if(start == end){
+        arr[index] = value;
+        build_tree(arr, tree, start, start, cn);
+        return;
+    }
+    
+    int mid = (start+end)/2;
+    if(index <= mid)    update_tree(arr, tree, start, mid, 2*cn+1, index, value);
+    else    update_tree(arr, tree, mid+1, end, 2*cn+2, index, value);
+    
+    tree[cn] = merge(tree[2*cn+1], tree[2*cn+2], end-mid);
+}
+
+// Query
+template <typename T> T query(vector<T> &tree, int start, int end, int cn, int left, int right){
+    // Out of range             // changable
+    if(start>right || end<left)    return 0;
+    // Totally in range
+    if(start>=left && end<=right)     return (tree[cn] * two_power[right-end])%mod;  // Query range is upto 'right' position.
+    // Partially in range
+    int mid = (start+end)/2;
+    auto a = query(tree, start, mid, 2*cn+1, left, right);
+    auto b = query(tree, mid+1, end, 2*cn+2, left, right);
+    return (a+b)%mod;  // a & b are already modified previously accourding to the range.
+}
+// /
+
+
+int main(){
+    two_power[0] = 1;
+    for(int i=1; i<=MAX; i++)    two_power[i] = (two_power[i-1] * 2)%mod;
+    
+    int n;    cin>>n;
+    string arr;    cin>>arr;
+    
+    vector<int> tree(4*n);
+    build_tree(arr, tree, 0, n-1, 0);
+    
+    int q;    cin>>q;
+    while(q--){
+        int task;    cin>>task;
+        if(task == 0){
+            int left, right;    cin>>left>>right;
+            cout<< query(tree, 0, n-1, 0, left, right) <<endl;
+        }
+        else{
+            int index;    cin>>index;
+            update_tree(arr, tree, 0, n-1, 0, index, '1');
+        }
+    }
+}
