@@ -10,7 +10,8 @@ template <typename T> T merge(T ln, T rn){    // changable
 }
 
 // Build Tree
-template <typename T, typename U> void build_tree(U &arr, vector<T> &tree, int start, int end, int cn){    if(start == end){    // changable
+template <typename T, typename U> void build_tree(U &arr, vector<T> &tree, int start, int end, int cn){
+    if(start == end){    // changable
         tree[cn] = arr[start];
         return;
     }
