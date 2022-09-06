@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// Segment tree
+
+// Merge
+template <typename T> T merge(T ln, T rn){    // changable  
+    return min(ln, rn);
+}
+
+// Build Tree
+template <typename T, typename U> void build_tree(U &arr, vector<T> &tree, int start, int end, int cn){
+    if(start == end){    // changable
+        tree[cn] = arr[start];
+        return;
+    }
+    
+    int mid = (start+end)/2;
+    build_tree(arr, tree, start, mid, 2*cn+1);
+    build_tree(arr, tree, mid+1, end, 2*cn+2);
+    tree[cn] = merge(tree[2*cn+1], tree[2*cn+2]);
+}
+
+// Update Tree Lazy
+template <typename T, typename V> void update_tree_lazy(vector<T> &tree, vector<T> &lazy, int start, int end, int cn, int left, int right, V diff){
+    if(start > end)    return;
+    
+    // If the node is lazy, update it.
+    if(lazy[cn] != 0){
+        tree[cn] += lazy[cn];
+        if(start != end){
+            lazy[2*cn+1] += lazy[cn];
+            lazy[2*cn+2] += lazy[cn];
+        }
+        lazy[cn] = 0;
+    }
+    
+    // Out of range
+    if(start>right || end<left)    return;
+    // Totally in range
+    if(start>=left && end<=right){
+        tree[cn] += diff;
+        if(start != end){
+            lazy[2*cn+1] += diff;
+            lazy[2*cn+2] += diff;
+        }
+        return;
+    }
+    // Partially in range
+    int mid = (start+end)/2;
+    update_tree_lazy(tree, lazy, start, mid, 2*cn+1, left, right, diff);
+    update_tree_lazy(tree, lazy, mid+1, end, 2*cn+2, left, right, diff);
+    tree[cn] = merge(tree[2*cn+1], tree[2*cn+2]); 
+}
+
+// Query Lazy
+template <typename T> T query_lazy(vector<T> &tree, vector<T> &lazy, int start, int end, int cn, int left, int right){
+    // If the node is lazy, update it.
+    if(lazy[cn] != 0){
+        tree[cn] += lazy[cn];
+        if(start != end){
+            lazy[2*cn+1] += lazy[cn];
+            lazy[2*cn+2] += lazy[cn];
+        }
+        lazy[cn] = 0;
+    }
+    
+    // Out of range 
+    if(start>end || start>right || end<left)    return INT_MAX;            // changable
+    // Totally in range
+    if(start>=left && end<=right)     return tree[cn];
+    // Partially in range
+    int mid = (start+end)/2;
+    auto a = query_lazy(tree, lazy, start, mid, 2*cn+1, left, right);
+    auto b = query_lazy(tree, lazy, mid+1, end, 2*cn+2, left, right);
+    return merge(a, b);
+}
+// /
+
+
+int main(){
+    int n;    cin>>n;
+    vector<int> arr(n);
+    for(auto &i : arr)    cin>> i;
+    
+    vector<int> tree(4*n);
+    vector<int> lazy(4*n, 0);
+    build_tree(arr, tree, 0, n-1, 0);
+    // for(auto i : tree)  cout<< i <<endl;
+    
+    int left, right, diff;
+    
+    cin>>left>>right>>diff;
+    update_tree_lazy(tree, lazy, 0, n-1, 0, left, right, diff);
+    
+    cin>> left >> right;
+    int ans = query_lazy(tree, lazy, 0, n-1, 0, left, right);
+    
+    cout<< ans <<endl;
+}
