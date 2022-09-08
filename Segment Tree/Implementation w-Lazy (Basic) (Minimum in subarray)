@@ -23,7 +23,7 @@ template <typename T, typename U> void build_tree(U &arr, vector<T> &tree, int s
 }
 
 // Update Tree Lazy
-template <typename T, typename V> void update_tree_lazy(vector<T> &tree, vector<T> &lazy, int start, int end, int cn, int left, int right, V diff){
+template <typename T, typename U, typename V> void update_tree_lazy(vector<T> &tree, vector<U> &lazy, int start, int end, int cn, int left, int right, V diff){
     if(start > end)    return;
     
     // If the node is lazy, update it.
@@ -55,7 +55,7 @@ template <typename T, typename V> void update_tree_lazy(vector<T> &tree, vector<
 }
 
 // Query Lazy
-template <typename T> T query_lazy(vector<T> &tree, vector<T> &lazy, int start, int end, int cn, int left, int right){
+template <typename T, typename U> T query_lazy(vector<T> &tree, vector<U> &lazy, int start, int end, int cn, int left, int right){
     // If the node is lazy, update it.
     if(lazy[cn] != 0){
         tree[cn] += lazy[cn];
