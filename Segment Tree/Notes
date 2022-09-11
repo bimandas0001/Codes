@@ -1,3 +1,5 @@
 The lazy Propagation technique is used in a segment tree to solve range queries in O(log n) time complexity.
 https://www.scaler.com/topics/data-structures/segment-tree-with-lazy-propagation/#:~:text=if%20we%20need,above%20problem%20efficiently.
 https://www.scaler.com/topics/data-structures/segment-tree-with-lazy-propagation/#:~:text=Range%20Update%20Query,n)%20time%20complexity.
+
+If in query the left & right both are out of range then it will return the base value. So, set the base value cautiously.
